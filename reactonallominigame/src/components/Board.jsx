@@ -5,7 +5,6 @@ export default function Board() {
     const [squares, setSquares] = useState([1, 2, 3]);
 
     function handleClick(idx) {
-        alert(idx);
         const nextSquares = squares.map((square, index) => {
             if (index === idx) {
                 return square + 1;
