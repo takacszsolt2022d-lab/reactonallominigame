@@ -1,5 +1,7 @@
+import Board from './components/Board'
+
 function App() {
-    return <p>Ez egy egyszerű szöveg.</p>;
+  return <Board />
 }
 
-export default App;
+export default App
