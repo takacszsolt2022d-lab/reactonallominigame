@@ -114,6 +114,27 @@ code {
   display: flex;
 }
 
+.game {
+  align-items: center;
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  justify-content: center;
+  padding: 24px;
+}
+
+.game h1 {
+  margin-bottom: 16px;
+}
+
+.game-status {
+  color: var(--text-h);
+  font-size: 20px;
+  font-weight: 600;
+  margin-bottom: 20px;
+  min-height: 1.5em;
+}
+
 .square {
   width: 100px;
   height: 100px;
@@ -124,4 +145,43 @@ code {
   align-items: center;
   justify-content: center;
   font-size: 85px;
+  line-height: 1;
+  padding: 0;
+  color: var(--text-h);
+  background: var(--bg);
+  cursor: pointer;
+}
+
+.square:disabled {
+  cursor: default;
+}
+
+.reset-button {
+  background: var(--accent);
+  border: 0;
+  border-radius: 6px;
+  color: white;
+  cursor: pointer;
+  font: inherit;
+  font-weight: 600;
+  margin-top: 24px;
+  padding: 10px 20px;
+}
+
+.reset-button:hover {
+  filter: brightness(0.92);
+}
+
+.square:focus-visible,
+.reset-button:focus-visible {
+  outline: 3px solid var(--accent);
+  outline-offset: 3px;
+}
+
+@media (max-width: 380px) {
+  .square {
+    width: 88px;
+    height: 88px;
+    font-size: 72px;
+  }
 }
