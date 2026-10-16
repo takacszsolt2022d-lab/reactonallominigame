@@ -1,5 +1,3 @@
-function Square() {
-  return <div className="square" />
+export default function Square() {
+    return <button className="square">x</button>;
 }
-
-export default Square

@@ -1,5 +1,11 @@
-function Board() {
-  return <div className="board">Játéktábla</div>
-}
+import Square from "./Square";
 
-export default Board
+export default function Board() {
+    return (
+        <div className="board-row">
+            <Square />
+            <Square />
+            <Square />
+        </div>
+    );
+}
