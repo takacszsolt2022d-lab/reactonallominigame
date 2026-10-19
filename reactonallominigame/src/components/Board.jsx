@@ -2,20 +2,19 @@ import { useState } from "react";
 import Square from "./Square";
 
 export default function Board() {
-    const [squares, setSquares] = useState([1, 2, 3]);
+    const [squares, setSquares] = useState(["", "", ""]);
 
     function handleClick(idx, mouseButton) {
         if (mouseButton !== "left" && mouseButton !== "right") {
             return;
         }
 
-        const nextSquares = squares.map((square, index) => {
+        setSquares((currentSquares) => currentSquares.map((square, index) => {
             if (index === idx) {
-                return square + 1;
+                return mouseButton === "left" ? "x" : "o";
             }
             return square;
-        });
-        setSquares(nextSquares);
+        }));
     }
     return (
         <div className="board-row">
