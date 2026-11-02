@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import { useState } from "react";
 import { PLAYER_O, PLAYER_X, Square } from "./Square";
 
 const BOARD_SIDES = 3;
@@ -17,65 +17,77 @@ const WIN_POSITIONS = [
 ];
 
 export function Board() {
-    const [status, setStatus] = useState(new Array(CELL_COUNT).fill(undefined));
-    const [winner, setWinner] = useState();
+    const [status, setStatus] = useState(Array(CELL_COUNT).fill(null));
+    const [currentPlayer, setCurrentPlayer] = useState(PLAYER_X);
+    const [winner, setWinner] = useState(null);
     const [gameOver, setGameOver] = useState(false);
-    const [lastCell, setLastCell] = useState();
-    const lastPlayer = useRef();
+    const [lastCell, setLastCell] = useState(null);
 
-    function handleClick(idx, player) {
-        // Ignore the click when it is not allowed.
-        if (player !== PLAYER_O && player !== PLAYER_X) return;
-        if (lastPlayer.current === player) return;
-        if (status[idx]) return;
-        if (winner) return;
+    function handleClick(index) {
+        if (status[index] || gameOver) return;
 
-        lastPlayer.current = player;
-        const newStatus = status.map((value, index) => (index === idx ? player : value));
-        win_check(newStatus, player);
+        const nextPlayer = currentPlayer;
+        const newStatus = status.map((value, cellIndex) => (cellIndex === index ? nextPlayer : value));
+
         setStatus(newStatus);
-        setLastCell(idx);
-    }
+        setLastCell(index);
 
-    function win_check(newStatus, player) {
-        const win_array = WIN_POSITIONS.map((pos) => {
-            const c1 = newStatus[pos[0]];
-            const c2 = newStatus[pos[1]];
-            const c3 = newStatus[pos[2]];
-            return c1 && c1 === c2 && c1 === c3 ? true : false;
+        const hasWinner = WIN_POSITIONS.some(([first, second, third]) => {
+            return newStatus[first] && newStatus[first] === newStatus[second] && newStatus[first] === newStatus[third];
         });
-        const isGameOver = win_array.some((value) => value);
-        if (isGameOver) {
-            setWinner(player);
+
+        if (hasWinner) {
+            setWinner(nextPlayer);
             setGameOver(true);
             return;
         }
+
         if (newStatus.every((cell) => cell)) {
+            setWinner(null);
             setGameOver(true);
+            return;
         }
+
+        setCurrentPlayer(nextPlayer === PLAYER_X ? PLAYER_O : PLAYER_X);
     }
 
     function handlePlayAgain() {
-        setStatus(new Array(CELL_COUNT).fill(undefined));
-        setWinner(undefined);
+        setStatus(Array(CELL_COUNT).fill(null));
+        setCurrentPlayer(PLAYER_X);
+        setWinner(null);
         setGameOver(false);
-        setLastCell(undefined);
-        lastPlayer.current = undefined;
+        setLastCell(null);
     }
 
+    const statusText = gameOver
+        ? winner
+            ? `Game over! ${winner} won`
+            : "Draw! No winner"
+        : `Next player: ${currentPlayer}`;
+
     return (
-        <div className="board">
-            {BOARD_INDICES.map((rowIndex) => (
-                <div className="board-row" key={rowIndex}>
-                    {BOARD_INDICES.map((columnIndex) => {
-                        const index = rowIndex * BOARD_SIDES + columnIndex;
-                        return <Square key={index} value={status[index]} highlight={index === lastCell} onSquareClick={(player) => handleClick(index, player)} />;
-                    })}
-                </div>
-            ))}
-            {gameOver && winner && <div>Game over! {winner} won</div>}
-            {gameOver && !winner && <div>Draw! No winner</div>}
-            {gameOver && <button onClick={handlePlayAgain}>Reset</button>}
+        <div className="game">
+            <h1>Tic-Tac-Toe</h1>
+            <div className="game-status">{statusText}</div>
+            <div className="board">
+                {BOARD_INDICES.map((rowIndex) => (
+                    <div className="board-row" key={rowIndex}>
+                        {BOARD_INDICES.map((columnIndex) => {
+                            const index = rowIndex * BOARD_SIDES + columnIndex;
+                            return (
+                                <Square
+                                    key={index}
+                                    value={status[index]}
+                                    highlight={index === lastCell}
+                                    disabled={Boolean(status[index]) || gameOver}
+                                    onSquareClick={() => handleClick(index)}
+                                />
+                            );
+                        })}
+                    </div>
+                ))}
+            </div>
+            {gameOver && <button className="reset-button" onClick={handlePlayAgain}>Reset</button>}
         </div>
     );
 }
