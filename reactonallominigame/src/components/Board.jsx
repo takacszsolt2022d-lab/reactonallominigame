@@ -22,33 +22,34 @@ export function Board() {
     const [winner, setWinner] = useState(null);
     const [gameOver, setGameOver] = useState(false);
     const [lastCell, setLastCell] = useState(null);
+    const [winningLine, setWinningLine] = useState([]);
 
     function handleClick(index) {
         if (status[index] || gameOver) return;
 
-        const nextPlayer = currentPlayer;
-        const newStatus = status.map((value, cellIndex) => (cellIndex === index ? nextPlayer : value));
+        const playedPlayer = currentPlayer;
+        const newStatus = status.map((value, cellIndex) => (cellIndex === index ? playedPlayer : value));
 
         setStatus(newStatus);
         setLastCell(index);
 
-        const hasWinner = WIN_POSITIONS.some(([first, second, third]) => {
+        const completedLine = WIN_POSITIONS.find(([first, second, third]) => {
             return newStatus[first] && newStatus[first] === newStatus[second] && newStatus[first] === newStatus[third];
         });
 
-        if (hasWinner) {
-            setWinner(nextPlayer);
+        if (completedLine) {
+            setWinner(playedPlayer);
+            setWinningLine(completedLine);
             setGameOver(true);
             return;
         }
 
-        if (newStatus.every((cell) => cell)) {
-            setWinner(null);
+        if (newStatus.every(Boolean)) {
             setGameOver(true);
             return;
         }
 
-        setCurrentPlayer(nextPlayer === PLAYER_X ? PLAYER_O : PLAYER_X);
+        setCurrentPlayer(playedPlayer === PLAYER_X ? PLAYER_O : PLAYER_X);
     }
 
     function handlePlayAgain() {
@@ -57,6 +58,7 @@ export function Board() {
         setWinner(null);
         setGameOver(false);
         setLastCell(null);
+        setWinningLine([]);
     }
 
     const statusText = gameOver
@@ -68,8 +70,8 @@ export function Board() {
     return (
         <div className="game">
             <h1>Tic-Tac-Toe</h1>
-            <div className="game-status">{statusText}</div>
-            <div className="board">
+            <div className="game-status" aria-live="polite" aria-atomic="true">{statusText}</div>
+            <div className="board" role="group" aria-label="Tic-tac-toe board">
                 {BOARD_INDICES.map((rowIndex) => (
                     <div className="board-row" key={rowIndex}>
                         {BOARD_INDICES.map((columnIndex) => {
@@ -77,8 +79,10 @@ export function Board() {
                             return (
                                 <Square
                                     key={index}
+                                    index={index}
                                     value={status[index]}
                                     highlight={index === lastCell}
+                                    winning={winningLine.includes(index)}
                                     disabled={Boolean(status[index]) || gameOver}
                                     onSquareClick={() => handleClick(index)}
                                 />
@@ -87,7 +91,7 @@ export function Board() {
                     </div>
                 ))}
             </div>
-            {gameOver && <button className="reset-button" onClick={handlePlayAgain}>Reset</button>}
+            <button type="button" className="reset-button" onClick={handlePlayAgain}>Reset</button>
         </div>
     );
 }
