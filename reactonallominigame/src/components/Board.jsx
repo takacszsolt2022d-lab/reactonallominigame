@@ -1,20 +1,10 @@
 import { useState } from "react";
 import { PLAYER_O, PLAYER_X, Square } from "./Square";
+import { win_check } from "../utils/gameUtils";
 
 const BOARD_SIDES = 3;
 const BOARD_INDICES = [...Array(BOARD_SIDES).keys()];
 const CELL_COUNT = BOARD_SIDES * BOARD_SIDES;
-
-const WIN_POSITIONS = [
-    [0, 1, 2],
-    [3, 4, 5],
-    [6, 7, 8],
-    [0, 3, 6],
-    [1, 4, 7],
-    [2, 5, 8],
-    [0, 4, 8],
-    [2, 4, 6],
-];
 
 export function Board() {
     const [status, setStatus] = useState(Array(CELL_COUNT).fill(null));
@@ -33,21 +23,9 @@ export function Board() {
         setStatus(newStatus);
         setLastCell(index);
 
-        const completedLine = WIN_POSITIONS.find(([first, second, third]) => {
-            return newStatus[first] && newStatus[first] === newStatus[second] && newStatus[first] === newStatus[third];
-        });
-
-        if (completedLine) {
-            setWinner(playedPlayer);
-            setWinningLine(completedLine);
-            setGameOver(true);
-            return;
-        }
-
-        if (newStatus.every(Boolean)) {
-            setGameOver(true);
-            return;
-        }
+        const result = win_check(newStatus, playedPlayer, setWinner, setGameOver);
+        if (result.winningLine) setWinningLine(result.winningLine);
+        if (result.isGameOver) return;
 
         setCurrentPlayer(playedPlayer === PLAYER_X ? PLAYER_O : PLAYER_X);
     }
