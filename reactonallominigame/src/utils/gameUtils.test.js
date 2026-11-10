@@ -1,5 +1,5 @@
 import { describe, expect, it, jest } from "@jest/globals";
-import { win_check } from "../reactonallominigame/src/utils/gameUtils.js";
+import { win_check } from "./gameUtils.js";
 
 const WIN_POSITIONS = [
     [0, 1, 2],

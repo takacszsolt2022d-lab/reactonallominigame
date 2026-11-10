@@ -1,5 +1,5 @@
 export default {
-    roots: ["<rootDir>/../unittest"],
     testEnvironment: "node",
-    transform: {},
+    transform: { "^.+\\.[jt]sx?$": "babel-jest" },
+    testMatch: ["**/src/**/*.test.js"],
 };
