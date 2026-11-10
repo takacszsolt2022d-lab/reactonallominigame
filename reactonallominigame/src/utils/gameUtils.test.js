@@ -1,4 +1,4 @@
-import { describe, expect, it, jest } from "@jest/globals";
+import { describe, expect, it, jest, test } from "@jest/globals";
 import { win_check } from "./gameUtils.js";
 
 const WIN_POSITIONS = [
@@ -21,7 +21,7 @@ function checkStatus(status, player = "X") {
 }
 
 describe("win_check", () => {
-    it.each(WIN_POSITIONS.map((positions) => [positions]))("detects a win in positions %j", (positions) => {
+    test.each(WIN_POSITIONS)("detects a win in positions %j", (...positions) => {
         const status = Array(9).fill(null);
         positions.forEach((position) => {
             status[position] = "X";
