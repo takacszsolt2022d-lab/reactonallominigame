@@ -21,7 +21,7 @@ function checkStatus(status, player = "X") {
 }
 
 describe("win_check", () => {
-    it.each(WIN_POSITIONS)("detects a win in positions %j", (positions) => {
+    it.each(WIN_POSITIONS.map((positions) => [positions]))("detects a win in positions %j", (positions) => {
         const status = Array(9).fill(null);
         positions.forEach((position) => {
             status[position] = "X";
@@ -30,8 +30,10 @@ describe("win_check", () => {
         const { result, setWinner, setGameOver } = checkStatus(status);
 
         expect(result).toEqual({ isGameOver: true, winningLine: positions });
-        expect(setWinner).toHaveBeenCalledExactlyOnceWith("X");
-        expect(setGameOver).toHaveBeenCalledExactlyOnceWith(true);
+        expect(setWinner).toHaveBeenCalledTimes(1);
+        expect(setWinner).toHaveBeenCalledWith("X");
+        expect(setGameOver).toHaveBeenCalledTimes(1);
+        expect(setGameOver).toHaveBeenCalledWith(true);
     });
 
     it("does not treat three empty cells as a winning line", () => {
@@ -57,7 +59,8 @@ describe("win_check", () => {
 
         expect(result).toEqual({ isGameOver: true, winningLine: null });
         expect(setWinner).not.toHaveBeenCalled();
-        expect(setGameOver).toHaveBeenCalledExactlyOnceWith(true);
+        expect(setGameOver).toHaveBeenCalledTimes(1);
+        expect(setGameOver).toHaveBeenCalledWith(true);
     });
 
     it("reports the supplied player when O completes a winning line", () => {
@@ -65,8 +68,10 @@ describe("win_check", () => {
         const { result, setWinner, setGameOver } = checkStatus(status, "O");
 
         expect(result).toEqual({ isGameOver: true, winningLine: [3, 4, 5] });
-        expect(setWinner).toHaveBeenCalledExactlyOnceWith("O");
-        expect(setGameOver).toHaveBeenCalledExactlyOnceWith(true);
+        expect(setWinner).toHaveBeenCalledTimes(1);
+        expect(setWinner).toHaveBeenCalledWith("O");
+        expect(setGameOver).toHaveBeenCalledTimes(1);
+        expect(setGameOver).toHaveBeenCalledWith(true);
     });
 
     it("prioritizes a win over a full-board draw", () => {
@@ -74,7 +79,9 @@ describe("win_check", () => {
         const { result, setWinner, setGameOver } = checkStatus(status);
 
         expect(result).toEqual({ isGameOver: true, winningLine: [0, 1, 2] });
-        expect(setWinner).toHaveBeenCalledExactlyOnceWith("X");
-        expect(setGameOver).toHaveBeenCalledExactlyOnceWith(true);
+        expect(setWinner).toHaveBeenCalledTimes(1);
+        expect(setWinner).toHaveBeenCalledWith("X");
+        expect(setGameOver).toHaveBeenCalledTimes(1);
+        expect(setGameOver).toHaveBeenCalledWith(true);
     });
 });

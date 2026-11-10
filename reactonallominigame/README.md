@@ -17,9 +17,11 @@ npm run dev
 ```sh
 npm run lint
 npm run build
+npm run test:unit
 npm run test:headless
 ```
 
-The Playwright tests launch the Vite server automatically and cover the board,
+The Jest unit tests cover the eight winning lines and rule edge cases. The
+Playwright tests launch the Vite server automatically and cover the board,
 turns, win and draw states, move highlighting, reset, and winning-line
 highlighting.
